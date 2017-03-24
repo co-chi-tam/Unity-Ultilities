@@ -23,8 +23,15 @@ namespace LineCollider2D {
 				m_ActiveLine = null;
 			}
 			if (m_ActiveLine != null) {
-				var mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-				m_ActiveLine.UpdateLine (mousePos);
+				var camera = Camera.main;
+				if (camera.orthographic) {
+					var mousePos = camera.ScreenToWorldPoint (Input.mousePosition);
+					m_ActiveLine.UpdateLine (mousePos);
+				} else {
+					var absZ = Mathf.Abs (camera.transform.position.z);
+					var mousePos = camera.ScreenPointToRay (Input.mousePosition);
+					m_ActiveLine.UpdateLine (mousePos.direction * absZ);
+				}
 			}
 
 		}
