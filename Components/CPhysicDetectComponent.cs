@@ -46,6 +46,7 @@ public class CPhysicDetectComponent : CComponent {
 	}
 
 	[Header("Event")]
+	public UnityEvent OnFree;
 	public UnityEvent OnDetected;
 
 	#endregion
@@ -86,11 +87,16 @@ public class CPhysicDetectComponent : CComponent {
 			this.m_DetectRadius, 
 			this.m_SampleColliders,
 			this.m_DetectLayerMask);  
-		if (this.m_PreviousCount != this.m_ColliderCount) {
+		if (this.m_PreviousCount != this.m_ColliderCount 
+			&& this.m_ColliderCount != 0) {
 			if (this.OnDetected != null) {
 				this.OnDetected.Invoke ();				
 			}
 			this.m_PreviousCount = this.m_ColliderCount;
+		} else {
+			if (this.OnFree != null) {
+				this.OnFree.Invoke ();
+			}
 		}
 	}
 
