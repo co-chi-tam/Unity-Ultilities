@@ -9,6 +9,7 @@ public class CMoveComponent : CComponent {
 
 	[Header ("Value")]
 	[SerializeField]	protected float m_MoveSpeed = 5f;
+	[SerializeField]	protected float m_RotationSpeed = 5f;
 	public float moveSpeed {
 		get { return this.m_MoveSpeed; }
 		set { this.m_MoveSpeed = value; }
@@ -65,9 +66,17 @@ public class CMoveComponent : CComponent {
 
 	public virtual void Move(float dt) {
 		var direction = this.m_TargetPosition - this.m_Transform.position;
-		if (direction.sqrMagnitude > this.m_MinDistance) {
-			var movePoint = direction.normalized;
-			this.m_Transform.Translate (direction.normalized * this.m_MoveSpeed * dt);
+		if (direction.sqrMagnitude > this.m_MinDistance * this.m_MoveSpeed) {
+//			var forward = this.m_Transform.forward;
+			var movePoint = direction.normalized * this.m_MoveSpeed * dt;
+			this.m_Transform.position += movePoint;
+
+			var angle = Mathf.Atan2 (direction.x, direction.z) * Mathf.Rad2Deg;
+			this.m_Transform.rotation = Quaternion.Lerp (
+				this.m_Transform.rotation, 
+				Quaternion.AngleAxis (angle, Vector3.up),
+				this.m_RotationSpeed * dt);
+
 			if (this.OnMove != null) {
 				this.OnMove.Invoke ();
 			}
